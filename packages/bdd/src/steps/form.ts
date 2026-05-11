@@ -1,15 +1,18 @@
 import { fuzzyLocator, setFieldValue } from '@letsrunit/playwright';
-import { type Scalar, sleep } from '@letsrunit/utils';
+import { type FileValue, type Scalar, sleep } from '@letsrunit/utils';
 import { When } from '../registry';
 
 const TIMEOUT = 500;
 const DELAY = 500;
 
-export const set = When('I set {locator} to {value}', async function (selector: string, value: Scalar | Scalar[]) {
+export const set = When(
+  'I set {locator} to {value}',
+  async function (selector: string, value: Scalar | Scalar[] | FileValue) {
   const el = await fuzzyLocator(this.page, selector);
   await setFieldValue(el, value, { timeout: TIMEOUT });
   await sleep(DELAY);
-});
+  },
+);
 
 export const setRange = When(
   'I set {locator} to range of {value} to {value}',

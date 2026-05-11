@@ -1,4 +1,4 @@
-import { chain, isArray, isRange } from '@letsrunit/utils';
+import { chain, isArray, isFileValue, isRange } from '@letsrunit/utils';
 import type { Locator } from '@playwright/test';
 import { pickFieldElement } from '../utils/pick-field-element';
 import { selectAria } from './aria-select';
@@ -8,6 +8,7 @@ import { setCompositeSelect } from './composite-select';
 import { setCompositeSlider } from './composite-slider';
 import { setCompositeToggle } from './composite-toggle';
 import { setDateGroup } from './date-group';
+import { setNativeFile } from './native-file';
 import { setDateTextInput } from './date-text-input';
 import { setNativeCheckbox } from './native-checkbox';
 import { setNativeDate } from './native-date';
@@ -20,12 +21,17 @@ import { setToggle } from './toggle';
 import type { Loc, SetOptions, Value } from './types';
 
 function toString(value: Value): string {
+  if (isFileValue(value)) return value.paths.join('\n');
   if (isRange(value)) return `${String(value.from)} - ${String(value.to)}`;
   if (isArray(value)) return value.map((v) => String(v)).join('\n');
   return String(value);
 }
 
 async function setFallback({ el }: Loc, value: Value, options?: SetOptions): Promise<boolean> {
+  if (isFileValue(value)) {
+    throw new Error('File values are only supported for input[type="file"]');
+  }
+
   await el.fill(toString(value), options); // Will likely fail, but will have a good error.
   return true;
 }
@@ -38,6 +44,7 @@ export async function setFieldValue(el: Locator, value: Value, options?: SetOpti
     setNativeCheckbox,
     setRadioGroup,
     setNativeDate,
+    setNativeFile,
     setNativeInput,
     // aria / components
     setToggle,

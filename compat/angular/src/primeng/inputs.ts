@@ -32,6 +32,16 @@ export class PrimeNgInputTextareaFixture {
 
 @Component({
   standalone: true,
+  imports: [FormsModule, InputTextModule],
+  template: `
+    <label for="upload">upload</label>
+    <input pInputText id="upload" type="file" multiple />
+  `,
+})
+export class PrimeNgFileInputFixture {}
+
+@Component({
+  standalone: true,
   imports: [FormsModule, CheckboxModule],
   template: `
     <label for="cb">checkbox</label>

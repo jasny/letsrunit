@@ -60,6 +60,8 @@ When I scroll text "Load more" into view
 ```gherkin
 When I set field "Email" to "user@example.com"
 When I set field "Country" to "France"
+When I set field "Profile picture" to file "fixtures/avatar.png"
+When I set field "Attachments" to file ["fixtures/a.txt", "fixtures/b.txt"]
 When I check field "Remember me"
 When I clear field "Search"
 When I set field "Price range" to range of 10 to 100
@@ -75,9 +77,12 @@ When I set field "Price range" to range of 10 to 100
 | Date (absolute) | `date "2025-01-22"` |
 | Date (relative) | `date of tomorrow`, `date of 3 days ago`, `date of 8 weeks from now` |
 | Generated password | `password of "user-uuid"` |
+| File upload | `file "avatar.png"`, `file ["a.txt", "b.txt"]` |
 | Array | `["Option A", "Option B"]` |
 
 To use `password of "..."`, set `LETSRUNIT_PASSWORD_SEED` in your environment.
+
+`file "..."` and `file ["...", "..."]` only work with file inputs. Relative paths resolve from the current working directory.
 
 ## Keyboard
 
@@ -119,4 +124,3 @@ See [Email Testing](email-testing.md) for setup and examples.
 ## Custom steps
 
 You can add your <a href="custom-steps">own step definitions</a> for project-specific behavior.
-

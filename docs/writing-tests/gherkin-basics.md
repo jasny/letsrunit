@@ -85,11 +85,15 @@ Letsrunit extends Cucumber with three parameter types used across the step libra
 | Type | Accepts | Example |
 |------|---------|---------|
 | `{locator}` | Any locator expression | `button "Sign in"`, `field "Email"`, `` `#submit` `` |
-| `{value}` | String, number, date expression, generated password, or array | `"hello"`, `42`, `date of tomorrow`, `password of "user-uuid"`, `["A", "B"]` |
+| `{value}` | String, number, date expression, generated password, file path value, or array | `"hello"`, `42`, `date of tomorrow`, `password of "user-uuid"`, `file "avatar.png"`, `file ["a.txt", "b.txt"]`, `["A", "B"]` |
 | `{keys}` | Quoted key or key combination | `"Enter"`, `"Control+A"`, `"Shift+Tab"` |
 
 {% hint style="info" %}
 `password of "..."` requires the `LETSRUNIT_PASSWORD_SEED` environment variable.
+{% endhint %}
+
+{% hint style="info" %}
+`file "..."` and `file ["...", "..."]` only work with `input[type="file"]`. Relative paths resolve from the current working directory.
 {% endhint %}
 
 See [Locators](locators.md) for the full locator syntax and [Step Reference](step-reference.md) for every available step.

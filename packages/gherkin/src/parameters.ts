@@ -1,7 +1,7 @@
-import type { Scalar } from '@letsrunit/utils';
+import type { FileValue, Scalar } from '@letsrunit/utils';
 import { KeyCombo, parseKeyCombo } from './keys/parse-key-combo';
 import { compileLocator, locatorRegexp } from './locator';
-import { arrayRegexp, scalarRegexp, valueTransformer } from './value';
+import { arrayRegexp, fileRegexp, scalarRegexp, valueTransformer } from './value';
 
 export interface ParameterTypeDefinition<T> {
   name: string;
@@ -42,11 +42,11 @@ export function enumParameter<const T extends readonly string[]>(
   };
 }
 
-export function valueParameter(name = 'value'): ParameterTypeDefinition<Scalar | Scalar[]> {
+export function valueParameter(name = 'value'): ParameterTypeDefinition<Scalar | Scalar[] | FileValue> {
   return {
     name,
     placeholder: name,
-    regexp: [scalarRegexp, arrayRegexp],
+    regexp: [fileRegexp, scalarRegexp, arrayRegexp],
     transformer: valueTransformer,
   };
 }

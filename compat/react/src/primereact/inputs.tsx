@@ -27,6 +27,15 @@ export function PrimeReactInputTextarea(props: any) {
   );
 }
 
+export function PrimeReactFileInput(props: any) {
+  return (
+    <PrimeReactProvider>
+      <label htmlFor="upload">Upload</label>
+      <InputText id="upload" type="file" {...props} />
+    </PrimeReactProvider>
+  );
+}
+
 export function PrimeReactCheckbox() {
   const [checked, setChecked] = useState(false);
   return (

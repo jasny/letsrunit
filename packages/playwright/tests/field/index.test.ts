@@ -35,6 +35,7 @@ function makeMockEl(tag: string, type: string | null): Locator {
     }),
     fill: vi.fn().mockResolvedValue(undefined),
     clear: vi.fn().mockResolvedValue(undefined),
+    setInputFiles: vi.fn().mockResolvedValue(undefined),
     locator: vi.fn().mockReturnValue(emptyLoc),
     getByRole: vi.fn().mockReturnValue(emptyLoc),
     getByLabel: vi.fn().mockReturnValue({ locator: vi.fn().mockReturnValue(emptyLoc) }),
@@ -67,5 +68,24 @@ describe('setFieldValue', () => {
     const el = makeMockEl('div', null);
     await setFieldValue(el, { from: 1, to: 5 });
     expect((el as any).fill).toHaveBeenCalledWith('1 - 5', undefined);
+  });
+
+  it('uses setInputFiles for native file inputs', async () => {
+    const el = makeMockEl('input', 'file');
+    await setFieldValue(el, { kind: 'file', paths: ['avatar.png'] });
+    expect((el as any).setInputFiles).toHaveBeenCalledWith('avatar.png', undefined);
+  });
+
+  it('uses setInputFiles with multiple files for native file inputs', async () => {
+    const el = makeMockEl('input', 'file');
+    await setFieldValue(el, { kind: 'file', paths: ['a.txt', 'b.txt'] });
+    expect((el as any).setInputFiles).toHaveBeenCalledWith(['a.txt', 'b.txt'], undefined);
+  });
+
+  it('throws for file values on non-file inputs', async () => {
+    const el = makeMockEl('input', 'text');
+    await expect(setFieldValue(el, { kind: 'file', paths: ['avatar.png'] })).rejects.toThrow(
+      'File values are only supported for input[type="file"]',
+    );
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isBinary, isDateArray, isDateRange, isEntity, isRecord } from '../src';
+import { isBinary, isDateArray, isDateRange, isEntity, isFileValue, isRecord } from '../src';
 
 describe('isBinary', () => {
   it('returns true for Uint8Array instances', () => {
@@ -55,5 +55,17 @@ describe('deprecated date guards', () => {
   it('isDateArray delegates to isArray(date)', () => {
     expect(isDateArray([new Date('2026-01-01'), new Date('2026-01-02')])).toBe(true);
     expect(isDateArray([new Date('2026-01-01'), '2026-01-02'])).toBe(false);
+  });
+});
+
+describe('isFileValue', () => {
+  it('accepts file value objects', () => {
+    expect(isFileValue({ kind: 'file', paths: ['a.txt', 'b.txt'] })).toBe(true);
+  });
+
+  it('rejects non-file values', () => {
+    expect(isFileValue({ kind: 'text', paths: ['a.txt'] })).toBe(false);
+    expect(isFileValue({ kind: 'file', paths: [1] })).toBe(false);
+    expect(isFileValue('a.txt')).toBe(false);
   });
 });

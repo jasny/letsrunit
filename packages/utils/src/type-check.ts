@@ -1,4 +1,4 @@
-import type { Predicate, Range, Scalar } from './types';
+import type { FileValue, Predicate, Range, Scalar } from './types';
 
 export function isBinary(input: unknown): input is Uint8Array {
   return input instanceof Uint8Array;
@@ -33,6 +33,12 @@ export function isArray<T>(value: unknown, isT?: Predicate<T>): value is T[] {
 }
 
 export const isDate: Predicate<Date> = (v): v is Date => v instanceof Date;
+export const isString: Predicate<string> = (v): v is string => typeof v === 'string';
+
+export function isFileValue(value: unknown): value is FileValue {
+  if (!isRecord(value) || value.kind !== 'file' || !('paths' in value)) return false;
+  return isArray(value.paths, isString);
+}
 
 /** @deprecated */
 export function isDateRange(value: unknown): value is Range<Date> {

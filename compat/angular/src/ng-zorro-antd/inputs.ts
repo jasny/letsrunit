@@ -31,6 +31,15 @@ export class NzInputMultilineFixture {
 
 @Component({
   standalone: true,
+  imports: [FormsModule, NzInputModule],
+  template: `
+    <input nz-input aria-label="upload" type="file" multiple />
+  `,
+})
+export class NzFileInputFixture {}
+
+@Component({
+  standalone: true,
   imports: [FormsModule, NzSwitchModule],
   template: `
     <nz-switch aria-label="switch" [(ngModel)]="checked"></nz-switch>

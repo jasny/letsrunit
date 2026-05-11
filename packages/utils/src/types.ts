@@ -36,4 +36,8 @@ export type Cartesian<T extends readonly (readonly unknown[])[]> = Array<{
 export type Predicate<T> = (value: unknown) => value is T;
 
 export type Scalar = string | number | Date;
+export interface FileValue {
+  kind: 'file';
+  paths: string[];
+}
 export type Range<T extends Scalar = Scalar> = { from: T; to: T };

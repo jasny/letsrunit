@@ -62,6 +62,21 @@ describe('steps/form (definitions)', () => {
     }
   });
 
+  it('sets a locator with file values', async () => {
+    const { setFieldValue } = await import('@letsrunit/playwright');
+    const page = {} as any;
+
+    await runStep(setStep, 'I set `#resume` to file "resume.pdf"', { page } as any);
+    expect(setFieldValue).toHaveBeenLastCalledWith(testLocator, { kind: 'file', paths: ['resume.pdf'] }, { timeout: 500 });
+
+    await runStep(setStep, 'I set `#uploads` to file ["a.txt", "b.txt"]', { page } as any);
+    expect(setFieldValue).toHaveBeenLastCalledWith(
+      testLocator,
+      { kind: 'file', paths: ['a.txt', 'b.txt'] },
+      { timeout: 500 },
+    );
+  });
+
   it('clears a locator', async () => {
     const { setFieldValue } = await import('@letsrunit/playwright');
     const page = {} as any;

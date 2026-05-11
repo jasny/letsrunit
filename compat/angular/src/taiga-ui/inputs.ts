@@ -35,6 +35,18 @@ export class TaigaTextareaFixture {
 
 @Component({
   standalone: true,
+  imports: [TuiTextfield],
+  template: `
+    <label for="upload">upload</label>
+    <tui-textfield>
+      <input id="upload" type="file" tuiTextfield aria-label="upload" multiple />
+    </tui-textfield>
+  `,
+})
+export class TaigaFileInputFixture {}
+
+@Component({
+  standalone: true,
   imports: [FormsModule, TuiCheckbox],
   template: `
     <label for="checkbox">checkbox</label>

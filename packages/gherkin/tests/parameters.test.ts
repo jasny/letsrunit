@@ -107,6 +107,16 @@ describe('valueParameter', () => {
     expect(v.getValue(null)).to.eq('Hello \\"world\\"');
   });
 
+  it('parses a single file value', () => {
+    const [v] = expr.match('value is file "avatar.png"')!;
+    expect(v.getValue(null)).to.deep.eq({ kind: 'file', paths: ['avatar.png'] });
+  });
+
+  it('parses multiple file values', () => {
+    const [v] = expr.match('value is file ["a.txt", "b.txt"]')!;
+    expect(v.getValue(null)).to.deep.eq({ kind: 'file', paths: ['a.txt', 'b.txt'] });
+  });
+
   it('parses a number (int and float, including negative)', () => {
     const [n1] = expr.match('value is 42')!;
     expect(n1.getValue(null)).to.eq(42);

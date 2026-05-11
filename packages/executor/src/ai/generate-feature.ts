@@ -43,7 +43,7 @@ Only use the following \`When\` steps:
 
 * \`{locator}\` - A readable description of a page element
 * \`{keys}\` - Keyboard input like "Enter" or "CTRL + S"
-* \`{value}\` - A string, number, date, or generated password, for example "Hello", 10, \`date of tomorrow\`, \`date "2026-02-22"\`, or \`password of "user-uuid"\`
+* \`{value}\` - A string, number, date, generated password, or file value, for example "Hello", 10, \`date of tomorrow\`, \`date "2026-02-22"\`, \`password of "user-uuid"\`, \`file "avatar.png"\`, or \`file ["a.txt", "b.txt"]\`
 
 **Locator rules**:
 ${locatorRules}
