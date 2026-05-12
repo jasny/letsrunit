@@ -1,5 +1,6 @@
 import { PrimeReactProvider } from 'primereact/api';
 import { Checkbox } from 'primereact/checkbox';
+import { FileUpload } from 'primereact/fileupload';
 import { InputSwitch } from 'primereact/inputswitch';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -28,10 +29,20 @@ export function PrimeReactInputTextarea(props: any) {
 }
 
 export function PrimeReactFileInput(props: any) {
+  const [files, setFiles] = useState<string[]>([]);
+
   return (
     <PrimeReactProvider>
-      <label htmlFor="upload">Upload</label>
-      <InputText id="upload" type="file" {...props} />
+      <div aria-label="result">{files.join(', ')}</div>
+      <FileUpload
+        name="upload"
+        customUpload
+        mode="basic"
+        chooseLabel="Upload"
+        onSelect={(event) => setFiles(Array.from(event.files ?? [], (file: File) => file.name))}
+        onClear={() => setFiles([])}
+        {...props}
+      />
     </PrimeReactProvider>
   );
 }

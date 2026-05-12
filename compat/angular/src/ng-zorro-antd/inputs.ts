@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { NzNoAnimationModule } from 'ng-zorro-antd/core/no-animation';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 
 @Component({
   standalone: true,
@@ -31,12 +35,33 @@ export class NzInputMultilineFixture {
 
 @Component({
   standalone: true,
-  imports: [FormsModule, NzInputModule],
+  imports: [HttpClientModule, NzButtonModule, NzUploadModule],
   template: `
-    <input nz-input aria-label="upload" type="file" multiple />
+    <div aria-label="result">{{ names.join(', ') }}</div>
+    <nz-upload
+      nzName="upload"
+      [nzMultiple]="true"
+      [nzCustomRequest]="customRequest"
+      (nzFileListChange)="onFileListChange($event)"
+    >
+      <button type="button" nz-button>Upload</button>
+    </nz-upload>
   `,
 })
-export class NzFileInputFixture {}
+export class NzFileInputFixture {
+  names: string[] = [];
+  private cdr = inject(ChangeDetectorRef);
+
+  customRequest = (item: { onSuccess?: (body: unknown, file?: unknown, xhr?: unknown) => void }) => {
+    const timeout = window.setTimeout(() => item.onSuccess?.({}, undefined, undefined), 0);
+    return new Subscription(() => window.clearTimeout(timeout));
+  };
+
+  onFileListChange(fileList: Array<{ name?: string }>) {
+    this.names = fileList.map((file) => file.name ?? '').filter(Boolean);
+    this.cdr.detectChanges();
+  }
+}
 
 @Component({
   standalone: true,

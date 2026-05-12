@@ -17,8 +17,9 @@ test('Taiga file input', async ({ mount, page }) => {
   await mount(TaigaFileInputFixture);
 
   const input = page.getByLabel('upload');
+  const root = page.locator('tui-textfield');
 
-  await setFieldValue(input, { kind: 'file', paths: [uploadA] }, { timeout: 1000 });
+  await setFieldValue(root, { kind: 'file', paths: [uploadA] }, { timeout: 1000 });
   await expect.poll(() => selectedFileNames(input)).toEqual(['upload-a.txt']);
 });
 
@@ -26,7 +27,8 @@ test('Taiga multi-file input', async ({ mount, page }) => {
   await mount(TaigaFileInputFixture);
 
   const input = page.getByLabel('upload');
+  const root = page.locator('tui-textfield');
 
-  await setFieldValue(input, { kind: 'file', paths: [uploadA, uploadB] }, { timeout: 1000 });
+  await setFieldValue(root, { kind: 'file', paths: [uploadA, uploadB] }, { timeout: 1000 });
   await expect.poll(() => selectedFileNames(input)).toEqual(['upload-a.txt', 'upload-b.txt']);
 });

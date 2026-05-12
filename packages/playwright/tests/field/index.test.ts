@@ -26,6 +26,12 @@ function makeEmptyLocator() {
 
 function makeMockEl(tag: string, type: string | null): Locator {
   const emptyLoc = makeEmptyLocator();
+  const fileInput: any = {
+    count: vi.fn().mockResolvedValue(0),
+    first: vi.fn().mockReturnThis(),
+    setInputFiles: vi.fn().mockResolvedValue(undefined),
+    fill: vi.fn().mockResolvedValue(undefined),
+  };
   const el: any = {
     count: vi.fn().mockResolvedValue(1),
     evaluate: vi.fn().mockResolvedValue(tag),
@@ -36,10 +42,14 @@ function makeMockEl(tag: string, type: string | null): Locator {
     fill: vi.fn().mockResolvedValue(undefined),
     clear: vi.fn().mockResolvedValue(undefined),
     setInputFiles: vi.fn().mockResolvedValue(undefined),
-    locator: vi.fn().mockReturnValue(emptyLoc),
+    locator: vi.fn().mockImplementation((selector: string) => {
+      if (selector === 'input[type="file"]') return fileInput;
+      return emptyLoc;
+    }),
     getByRole: vi.fn().mockReturnValue(emptyLoc),
     getByLabel: vi.fn().mockReturnValue({ locator: vi.fn().mockReturnValue(emptyLoc) }),
     page: vi.fn().mockReturnValue({ locator: vi.fn().mockReturnValue(emptyLoc) }),
+    __fileInput: fileInput,
   };
   return el as unknown as Locator;
 }
@@ -87,5 +97,17 @@ describe('setFieldValue', () => {
     await expect(setFieldValue(el, { kind: 'file', paths: ['avatar.png'] })).rejects.toThrow(
       'File values are only supported for input[type="file"]',
     );
+  });
+
+  it('throws for non-file values on file inputs', async () => {
+    const el = makeMockEl('input', 'file');
+    await expect(setFieldValue(el, 'avatar.png')).rejects.toThrow('File inputs only support file values');
+  });
+
+  it('uses a descendant file input when the locator points to a component root', async () => {
+    const el = makeMockEl('div', null) as any;
+    el.__fileInput.count.mockResolvedValue(1);
+    await setFieldValue(el, { kind: 'file', paths: ['avatar.png'] });
+    expect(el.__fileInput.setInputFiles).toHaveBeenCalledWith('avatar.png', undefined);
   });
 });

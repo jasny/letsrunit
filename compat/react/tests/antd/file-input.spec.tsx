@@ -1,32 +1,24 @@
 import { setFieldValue } from '@letsrunit/playwright';
-import { Input } from 'antd';
 import { expect, test } from '@playwright/experimental-ct-react';
-import type { Locator } from '@playwright/test';
 import { resolve } from 'node:path';
+import { AntdUpload } from '../../src/antd/upload';
 
 const uploadA = resolve(process.cwd(), 'tests/fixtures/upload-a.txt');
 const uploadB = resolve(process.cwd(), 'tests/fixtures/upload-b.txt');
 
-async function selectedFileNames(locator: Locator): Promise<string[]> {
-  return locator.evaluate((input) =>
-    Array.from((input as HTMLInputElement).files ?? [], (file) => file.name),
-  );
-}
-
 test('AntDesign file input', async ({ mount, page }) => {
-  await mount(<Input aria-label="Upload" type="file" />);
+  await mount(<AntdUpload />);
+  const root = page.locator('.ant-upload-wrapper').first();
 
-  const input = page.getByLabel('Upload');
-
-  await setFieldValue(input, { kind: 'file', paths: [uploadA] }, { timeout: 500 });
-  await expect.poll(() => selectedFileNames(input)).toEqual(['upload-a.txt']);
+  await setFieldValue(root, { kind: 'file', paths: [uploadA] }, { timeout: 500 });
+  await expect(root).toContainText('upload-a.txt');
 });
 
 test('AntDesign multi-file input', async ({ mount, page }) => {
-  await mount(<Input aria-label="Uploads" type="file" multiple />);
+  await mount(<AntdUpload multiple />);
+  const root = page.locator('.ant-upload-wrapper').first();
 
-  const input = page.getByLabel('Uploads');
-
-  await setFieldValue(input, { kind: 'file', paths: [uploadA, uploadB] }, { timeout: 500 });
-  await expect.poll(() => selectedFileNames(input)).toEqual(['upload-a.txt', 'upload-b.txt']);
+  await setFieldValue(root, { kind: 'file', paths: [uploadA, uploadB] }, { timeout: 500 });
+  await expect(root).toContainText('upload-a.txt');
+  await expect(root).toContainText('upload-b.txt');
 });

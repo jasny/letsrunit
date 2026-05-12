@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
+import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { TextareaModule } from 'primeng/textarea';
@@ -32,13 +34,27 @@ export class PrimeNgInputTextareaFixture {
 
 @Component({
   standalone: true,
-  imports: [FormsModule, InputTextModule],
+  imports: [FileUploadModule, HttpClientModule],
   template: `
-    <label for="upload">upload</label>
-    <input pInputText id="upload" type="file" multiple />
+    <p-fileupload
+      name="upload"
+      chooseLabel="Upload"
+      [customUpload]="true"
+      [showUploadButton]="false"
+      [showCancelButton]="false"
+      [multiple]="true"
+      mode="advanced"
+      (onSelect)="onSelect($event)"
+    />
   `,
 })
-export class PrimeNgFileInputFixture {}
+export class PrimeNgFileInputFixture {
+  names: string[] = [];
+
+  onSelect(event: { files?: File[] }) {
+    this.names = (event.files ?? []).map((file) => file.name);
+  }
+}
 
 @Component({
   standalone: true,
