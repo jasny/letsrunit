@@ -26,6 +26,21 @@ function makeEmptyLocator() {
 
 function makeMockEl(tag: string, type: string | null): Locator {
   const emptyLoc = makeEmptyLocator();
+  const chipsInput: any = {
+    count: vi.fn().mockResolvedValue(0),
+    all: vi.fn().mockResolvedValue([]),
+    first: vi.fn().mockReturnThis(),
+    fill: vi.fn().mockResolvedValue(undefined),
+    press: vi.fn().mockResolvedValue(undefined),
+    focus: vi.fn().mockResolvedValue(undefined),
+  };
+  const chipsListbox: any = {
+    count: vi.fn().mockResolvedValue(0),
+    first: vi.fn().mockReturnThis(),
+    locator: vi.fn().mockReturnValue({
+      count: vi.fn().mockResolvedValue(0),
+    }),
+  };
   const fileInput: any = {
     count: vi.fn().mockResolvedValue(0),
     first: vi.fn().mockReturnThis(),
@@ -44,12 +59,16 @@ function makeMockEl(tag: string, type: string | null): Locator {
     setInputFiles: vi.fn().mockResolvedValue(undefined),
     locator: vi.fn().mockImplementation((selector: string) => {
       if (selector === 'input[type="file"]') return fileInput;
+      if (selector === '[role="listbox"]') return chipsListbox;
+      if (selector === 'input[type="text"], input:not([type])') return chipsInput;
       return emptyLoc;
     }),
     getByRole: vi.fn().mockReturnValue(emptyLoc),
     getByLabel: vi.fn().mockReturnValue({ locator: vi.fn().mockReturnValue(emptyLoc) }),
     page: vi.fn().mockReturnValue({ locator: vi.fn().mockReturnValue(emptyLoc) }),
     __fileInput: fileInput,
+    __chipsInput: chipsInput,
+    __chipsListbox: chipsListbox,
   };
   return el as unknown as Locator;
 }
@@ -109,5 +128,28 @@ describe('setFieldValue', () => {
     el.__fileInput.count.mockResolvedValue(1);
     await setFieldValue(el, { kind: 'file', paths: ['avatar.png'] });
     expect(el.__fileInput.setInputFiles).toHaveBeenCalledWith('avatar.png', undefined);
+  });
+
+  it('sets a composite chips control from a single string', async () => {
+    const el = makeMockEl('div', null) as any;
+    el.__chipsListbox.count.mockResolvedValue(1);
+    el.__chipsInput.count.mockResolvedValue(1);
+
+    await setFieldValue(el, 'hello');
+
+    expect(el.__chipsInput.fill).toHaveBeenCalledWith('hello', undefined);
+    expect(el.__chipsInput.press).toHaveBeenCalledWith('Enter', undefined);
+  });
+
+  it('sets a composite chips control from an array of strings', async () => {
+    const el = makeMockEl('div', null) as any;
+    el.__chipsListbox.count.mockResolvedValue(1);
+    el.__chipsInput.count.mockResolvedValue(1);
+
+    await setFieldValue(el, ['hello', 'world']);
+
+    expect(el.__chipsInput.fill).toHaveBeenNthCalledWith(1, 'hello', undefined);
+    expect(el.__chipsInput.fill).toHaveBeenNthCalledWith(2, 'world', undefined);
+    expect(el.__chipsInput.press).toHaveBeenCalledTimes(2);
   });
 });

@@ -1,5 +1,6 @@
 import { PrimeReactProvider } from 'primereact/api';
 import { Checkbox } from 'primereact/checkbox';
+import { Chips } from 'primereact/chips';
 import { FileUpload } from 'primereact/fileupload';
 import { InputSwitch } from 'primereact/inputswitch';
 import { InputText } from 'primereact/inputtext';
@@ -43,6 +44,18 @@ export function PrimeReactFileInput(props: any) {
         onClear={() => setFiles([])}
         {...props}
       />
+    </PrimeReactProvider>
+  );
+}
+
+export function PrimeReactChips(props: any) {
+  const [value, setValue] = useState<string[]>([]);
+
+  return (
+    <PrimeReactProvider>
+      <label htmlFor="chips">Tags</label>
+      <Chips inputId="chips" value={value} onChange={(event) => setValue(event.value ?? [])} {...props} />
+      <div aria-label="result">{value.join(', ')}</div>
     </PrimeReactProvider>
   );
 }

@@ -6,6 +6,7 @@ import { setCalendarDate } from './calendar';
 import { setCompositeDate } from './composite-date';
 import { setCompositeSelect } from './composite-select';
 import { setCompositeSlider } from './composite-slider';
+import { setCompositeTokenList } from './composite-token-list';
 import { setCompositeToggle } from './composite-toggle';
 import { setDateGroup } from './date-group';
 import { setNativeFile } from './native-file';
@@ -54,6 +55,7 @@ export async function setFieldValue(el: Locator, value: Value, options?: SetOpti
     setOtpValue,
     setSliderValue,
     // generic non-semantic composite controls
+    setCompositeTokenList,
     setCompositeToggle,
     setCompositeSelect,
     setCompositeSlider,
