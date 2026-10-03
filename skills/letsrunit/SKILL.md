@@ -5,7 +5,7 @@ description: Verify and investigate web UI behavior in a real browser with Letsr
 
 # Letsrunit
 
-Run the relevant browser flow and report what happened. Keep the observed result separate from the requirement or test expectation. Use [letsrunit-writer](../letsrunit-writer/SKILL.md) when the task is to create or change a `.feature` file or step definition.
+Run the relevant browser flow and report what happened. Keep the observed result separate from the requirement or test expectation. Use [letsrunit-writer](../letsrunit-writer/SKILL.md) when the task is to create or change a scenario or step definition.
 
 ## Choose the run
 
