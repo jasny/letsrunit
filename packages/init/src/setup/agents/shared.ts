@@ -10,7 +10,7 @@ const MCP_JSON_ENTRY = {
 };
 
 const AGENT_REPOSITORY = 'letsrunit-hq/agents';
-const SKILL_DIRECTORY = 'skills/letsrunit';
+const SKILL_NAMES = ['letsrunit', 'letsrunit-writer'] as const;
 
 interface GithubContentItem {
   type: 'dir' | 'file';
@@ -24,7 +24,7 @@ export interface SkillFile {
   content: string;
 }
 
-export type SkillFileFetcher = () => Promise<SkillFile[]>;
+export type SkillFileFetcher = (skillName: string) => Promise<SkillFile[]>;
 
 export function hasPath(path: string): boolean {
   return existsSync(path);
@@ -132,16 +132,16 @@ function listDirectoryFiles(path: string, basePath = path): string[] {
   return files.sort();
 }
 
-async function collectSkillFiles(path = SKILL_DIRECTORY): Promise<SkillFile[]> {
+async function collectSkillFiles(path: string, rootPath = path): Promise<SkillFile[]> {
   const items = await fetchGithubDirectory(path);
   const files: SkillFile[] = [];
 
   for (const item of items) {
     if (item.type === 'dir') {
-      files.push(...(await collectSkillFiles(item.path)));
+      files.push(...(await collectSkillFiles(item.path, rootPath)));
     } else if (item.type === 'file') {
       if (!item.download_url) throw new Error(`Missing download URL for ${item.path}`);
-      const relativePath = relative(SKILL_DIRECTORY, item.path);
+      const relativePath = relative(rootPath, item.path);
       validateSkillPath(relativePath);
       files.push({ path: relativePath, content: await fetchGithubFile(item.download_url) });
     }
@@ -161,10 +161,11 @@ function skillContentMatches(destination: string, files: SkillFile[]): boolean {
   });
 }
 
-export async function fetchLetsrunitSkillFiles(): Promise<SkillFile[]> {
-  const files = await collectSkillFiles();
+export async function fetchLetsrunitSkillFiles(skillName: string): Promise<SkillFile[]> {
+  const skillDirectory = `skills/${skillName}`;
+  const files = await collectSkillFiles(skillDirectory);
   if (!files.some((file) => file.path === 'SKILL.md')) {
-    throw new Error(`${AGENT_REPOSITORY}/${SKILL_DIRECTORY} does not contain SKILL.md.`);
+    throw new Error(`${AGENT_REPOSITORY}/${skillDirectory} does not contain SKILL.md.`);
   }
   return files;
 }
@@ -173,18 +174,23 @@ export async function ensureSkillDirectory(
   cwd: string,
   fetchFiles: SkillFileFetcher = fetchLetsrunitSkillFiles,
 ): Promise<'installed' | 'skipped'> {
-  const destination = join(cwd, '.agents', 'skills', 'letsrunit');
-  const files = await fetchFiles();
-
-  if (skillContentMatches(destination, files)) return 'skipped';
-
-  removeDirectoryFiles(destination);
-  for (const file of files) {
-    validateSkillPath(file.path);
-    const destinationPath = join(destination, file.path);
-    mkdirSync(dirname(destinationPath), { recursive: true });
-    writeFileSync(destinationPath, file.content, 'utf-8');
+  const skills = await Promise.all(
+    SKILL_NAMES.map(async (skillName) => ({
+      destination: join(cwd, '.agents', 'skills', skillName),
+      files: await fetchFiles(skillName),
+    })),
+  );
+  let installed = false;
+  for (const { destination, files } of skills) {
+    if (skillContentMatches(destination, files)) continue;
+    removeDirectoryFiles(destination);
+    for (const file of files) {
+      validateSkillPath(file.path);
+      const destinationPath = join(destination, file.path);
+      mkdirSync(dirname(destinationPath), { recursive: true });
+      writeFileSync(destinationPath, file.content, 'utf-8');
+    }
+    installed = true;
   }
-
-  return 'installed';
+  return installed ? 'installed' : 'skipped';
 }

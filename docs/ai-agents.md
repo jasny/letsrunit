@@ -7,13 +7,13 @@ description: Let your AI coding agent verify its work against a real browser and
 AI Agent integration has two parts:
 
 - **The MCP server** runs a real browser and exposes it as tools the agent can call: start a session, run Gherkin steps, take screenshots, read the DOM, evaluate JavaScript, investigate failures.
-- **The skill** is a context document that gives the agent deep knowledge of letsrunit. Without it, the agent can call the tools but won't know how to use them well.
+- **The skills** guide two jobs: `letsrunit` runs and investigates browser flows, while `letsrunit-writer` writes persistent feature tests and reusable custom step definitions. The writer checks available steps before adding custom code.
 
 ## Setup
 
 ### Project (recommended)
 
-Install Letsrunit for your project, including the MCP server and skill
+Install Letsrunit for your project, including the MCP server and both skills
 
 ```bash
 npx letsrunit@latest init
@@ -27,7 +27,7 @@ You can install the Letsrunit MCP server and skill globally for all your project
 
 {% tabs %}
 {% tab title="Claude Code" %}
-The Letsrunit plugin installs both the MCP server and the skill automatically. Run inside Claude Code:
+The Letsrunit plugin installs the MCP server and both skills automatically. Run inside Claude Code:
 
 ```
 /plugin marketplace add letsrunit-hq/agents
@@ -43,13 +43,13 @@ Add the MCP server:
 codex mcp add letsrunit -- npx -y @letsrunit/mcp-server@latest
 ```
 
-Install the skill into your repo.
+Install the skills into your repo.
 
 ```bash
 npx skills add letsrunit-hq/agents
 ```
 
-Codex loads it when you ask it to write or run browser tests.
+Codex uses `letsrunit` for live browser work and `letsrunit-writer` for test authoring.
 {% endtab %}
 
 {% tab title="Cursor" %}
@@ -89,7 +89,7 @@ Add the MCP server in your agent's config format. The standard JSON:
 }
 ```
 
-Then load the skill into your agent's system context:
+Then load the skills into your agent's system context:
 
 ```
 npx skills add letsrunit-hq/agents
