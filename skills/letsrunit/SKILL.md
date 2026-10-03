@@ -1,120 +1,60 @@
 ---
 name: letsrunit
-description: Generate and execute browser tests using Gherkin (Given/When/Then) syntax via a real Playwright browser. Use when asked to write, run, or debug browser tests, or to automate and verify web UI behaviour.
-compatibility: Requires the letsrunit MCP server to be configured. See https://github.com/letsrunit/letsrunit.
+description: Verify and investigate web UI behavior in a real browser with Letsrunit. Use for running existing browser scenarios, exploring live page state, or diagnosing a failing flow. Use letsrunit-writer to author or maintain persistent feature tests and custom steps.
 ---
 
-## MCP Tools
+# Letsrunit
 
-| Tool | Description |
-|------|-------------|
-| `letsrunit_session_start` | Launch a browser. Returns `{ sessionId }`. Does **not** navigate. |
-| `letsrunit_run` | Execute Gherkin steps or a full feature. Returns `{ status, steps, reason?, journal }`. Does **not** return HTML. |
-| `letsrunit_snapshot` | Get scrubbed page HTML on demand. Accepts `selector` and scrub options. |
-| `letsrunit_screenshot` | Take a screenshot. Accepts `selector` (crop to element) and `mask` (spotlight elements). |
-| `letsrunit_diff` | Diff the current live page against the HTML snapshot from the last passing test of a scenario. Pass the `scenarioId` returned by `letsrunit_run`. |
-| `letsrunit_debug` | Evaluate JavaScript on the current page. Returns `{ result, error? }`. For debugging only. |
-| `letsrunit_session_close` | Close the browser and release its resources. |
-| `letsrunit_list_sessions` | List all active sessions. |
-| `letsrunit_list_steps` | List available step definitions for the current session. Optional `type`: `Given`, `When`, `Then`. |
+Run the relevant browser flow and report what happened. Keep the observed result separate from the requirement or test expectation. Use [letsrunit-writer](../letsrunit-writer/SKILL.md) when the task is to create or change a `.feature` file or step definition.
 
-## Writing Tests
+## Choose the run
 
-Tests are written in Gherkin. Every test must start with a `Given I'm on the homepage` or `Given I'm on page` step to navigate.
-Do not assume step names from memory. Always call `letsrunit_list_steps` first and use that output as the source of truth.
+- **Existing saved feature:** use the project's configured Cucumber command for the feature or scenario. This checks the persisted test with its support files and runner configuration. Use a live MCP session to inspect a failure when the suite output is insufficient.
+- **Live verification or exploration:** use the Letsrunit MCP session and run only the interactions needed to answer the question. Verify the expected outcome with an assertion or direct page evidence.
+- **No configured Cucumber runner:** use MCP for the requested live check and report that a saved suite run was unavailable. Set up a runner only when that is part of the task.
 
-Relative paths (e.g. `"/login"`) require a `baseURL` set in `cucumber.js`:
+Do not create a new regression feature merely because a live check is requested. Do not treat a successful click as proof of the requested outcome.
 
-```js
-export default {
-  timeout: 30_000,
-  worldParameters: { baseURL: 'http://localhost:3000' },
-};
+## Run with Cucumber
+
+Run commands from the project root, where `cucumber.js` and the project's support files are configured. Prefer an existing project script if it sets required environment variables.
+```bash
+npx cucumber-js features/login.feature
+npx cucumber-js features/login.feature --name '^Sign in with a valid account$'
+npx cucumber-js
 ```
+These run one feature, one named scenario, and the configured suite respectively. Replace the path and scenario name with those in the project. Make sure the application and required test services are running. Read the command's exit status and failure details; a failed runner setup is different from a failed browser assertion.
 
-```gherkin
-Feature: Login
+Assume Cucumber is already configured for Letsrunit. Its configuration automatically selects `@letsrunit/cucumber/agent` in a detected AI agent environment, which emits structured NDJSON for AI agent ingestion, including step results and failure details. Run the project's command without adding a `--format` flag.
 
-Scenario: User logs in with valid credentials
-  Given I'm on page "/login"
-  When I set field "email" to "user@example.com"
-  And I set field "password" to "secret"
-  And I click button "Sign in"
-  Then the page contains text "Dashboard"
-  And I should be on page "/dashboard"
-```
+## Live browser tools
 
-## Locators
+| Tool | Use |
+| --- | --- |
+| `letsrunit_session_start` | Launch a browser and return a `sessionId`; it does not navigate. |
+| `letsrunit_run` | Run step lines, a scenario, or a feature. Read `status`, step results, `reason`, `journal`, and `scenarioId`. The result does not contain page HTML. |
+| `letsrunit_snapshot` | Inspect scrubbed HTML, optionally within a selector, to see text, structure, names, and current state. |
+| `letsrunit_screenshot` | Inspect visual state; crop with `selector` or spotlight with `mask` when useful. |
+| `letsrunit_diff` | Compare the live page with the last passing stored snapshot for a `scenarioId`, when that baseline exists. |
+| `letsrunit_debug` | Evaluate targeted JavaScript on the page for a diagnostic question. |
+| `letsrunit_list_steps` | Inspect the available step expressions when a needed expression is unknown or a step is reported missing. |
+| `letsrunit_list_sessions` | Find active sessions when session ownership is unclear. |
+| `letsrunit_session_close` | Release the browser after the check or investigation. |
 
-Locators identify elements on the page. Prefer natural language over raw CSS selectors.
+For a live check, start a session, navigate with an available Given step, run the relevant action and outcome check with `letsrunit_run`, then close the session. Run small step batches while exploring; run the complete flow from a known starting state when verifying a result. Keep a failed session open until its page state has been inspected.
 
-| Pattern | Example | Description |
-|---------|---------|-------------|
-| `button "text"` | `button "Sign in"` | Button by visible text or aria-label |
-| `link "text"` | `link "Home"` | `<a>` tag by its text |
-| `field "label"` | `field "Email"` | Input by label text, placeholder, or aria-label |
-| `text "content"` | `text "Welcome"` | Any element containing the text |
-| `image "alt"` | `image "Logo"` | Image by alt text |
-| `date "value"` | `date "2025-01-22"` | Element by specific date |
-| `date of {expr}` | `date of tomorrow` | Relative dates (`date of 3 days ago`, `date of 1 week from now at 20:00`) |
-| `{role} "name"` | `menuitem "Profile"` | Element by ARIA role |
-| `{tag}` | `div`, `section` | HTML tag name |
-| `` `selector` `` | `` `.btn-primary` `` | Raw Playwright selector (last resort) |
+Use the application's expected behavior to choose the assertion. An observed page change can explain a failure but does not, by itself, redefine what should happen.
 
-**Scoping:** `` button "Submit" within `#checkout-form` `` — scope to a parent element.
-**Filtering:** `section with button "Save"` / `section without text "Expired"` — filter by descendants.
+## Locator and run details
 
-**Rules:** prefer descriptive locators over attribute-based ones; use `link` for `<a>` tags; ensure locators are unambiguous.
+Use user-facing locators in live steps where possible: `button "Save"`, `link "Orders"`, `field "Email"`, `text "Saved"`, or an accessible role such as `menuitem "Profile"`. Scope repeated controls with `within`; use a raw selector in backticks when no meaningful name or text identifies the target. A relative page path such as `"/orders"` needs a configured base URL.
 
-## Values
+`letsrunit_run` can receive one step, several steps, or a full scenario. A session start alone leaves the browser at its initial page. The run result tells you which steps passed or failed; request a snapshot separately when you need DOM evidence. If a locator is ambiguous or missing, inspect the relevant subtree before retrying with a narrower expression.
 
-- **String** — `"hello"`
-- **Number** — `42`
-- **Boolean** — `true` / `false`
-- **Date** — `date of tomorrow`, `date of 3 days ago`, `date of 8 weeks from now` or `date "2025-01-22"`
-- **Generated password** — `password of "some-user"` (requires `LETSRUNIT_PASSWORD_SEED` env var)
-- **Array** — `["Option A", "Option B"]`
+## Investigate only when needed
 
-## Key Combinations
+For a failed run or an observed result that conflicts with the expectation, read [failure diagnosis](references/failure-diagnosis.md). Use the first failed step, reason, journal, and current page state to distinguish an application defect from a test, locator, setup, or registration problem. Use `letsrunit_diff` only when a passing baseline exists.
 
-Standard key names: `Enter`, `Tab`, `Escape`, `Space`, `ArrowDown`.
-Modifier combos: `Control+A`, `Shift+Tab`, `Meta+K`.
+When project custom steps are missing, support files changed, or MCP and Cucumber disagree, read [project runtime](references/project-runtime.md). A live MCP result and a Cucumber suite result are separate pieces of evidence; report which produced each conclusion.
 
-## When to use letsrunit vs Cucumber
-
-**Use letsrunit** for the development loop: writing a scenario, running it, debugging failures, iterating. One scenario at a time with a live browser session you can inspect.
-
-**Use Cucumber** for pass/fail suite runs across all scenarios. If the project has Cucumber configured, prefer it for running the full feature file.
-Cubumber will switch to an agent friendly formatter that emits machine-oriented NDJSON with structured failure details and baseline diff context.
-
-**Cucumber not configured?** Suggest running `npx letsrunit init` to set it up. If the user declines, fall back to running each scenario individually via the MCP, iterating through them one at a time.
-
-## Workflow
-
-1. `letsrunit_session_start` — launch the browser (no navigation)
-2. `letsrunit_list_steps` — discover all steps available in this runtime
-3. `letsrunit_run` with `Given I'm on the homepage` or `Given I'm on page "/path"` — navigate to the target URL
-4. Call `letsrunit_snapshot` when you need to inspect the DOM
-5. Propose **When** steps in small batches, run them, observe `status` and `steps`
-6. Generate **Then** assertions based on what actually happened
-7. `letsrunit_session_close` when done
-8. Return the complete Gherkin feature
-
-## Debugging
-
-- Step failed → `letsrunit_snapshot` with `selector` to inspect the relevant DOM subtree
-- Visual confirmation → `letsrunit_screenshot` with `mask` to spotlight the element
-- Arbitrary JS → `letsrunit_debug`, e.g. `document.querySelector('#btn')?.textContent`
-- Locator not found → try a broader selector or inspect the HTML for the actual text
-- Regression → `letsrunit_diff` with `scenarioId` to see what changed compared to the last passing test
-- Keep the session open after a failure to inspect state and run follow-up steps
-- When encountering a failure running cucumber, explicitly classify the fix path:
-  - **Test issue**: expected behavior/selector/assertion is stale or too strict; update the Gherkin test.
-  - **Code issue**: application behavior regressed or is incorrect; update product code.
-  - If uncertain, gather evidence (NDJSON failure payload, diff, snapshot, screenshot) and state which side is most likely before editing.
-
-## Gherkin Rules
-
-- Use `And` after the first step of a type — the runner treats it as the same type as the preceding keyword
-- `But` is also accepted as an alias
-- One scenario per `letsrunit_run` call
+Finish with the flow or saved scenario tested, the observed result, the evidence used, and any unresolved blocker. Do not call an unrun scenario passing.

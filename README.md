@@ -2,7 +2,7 @@
 
 # AI Agent Integration
 
-Skills and plugin for AI coding agents. Gives your agent a real Chromium browser it can drive with Gherkin steps — and produces `.feature` files that keep running in CI after the session ends.
+Skills and plugin for AI coding agents. The `letsrunit` skill runs and investigates browser flows. The `letsrunit-writer` skill writes persistent `.feature` tests and reusable custom step definitions, using existing steps first.
 
 ## Claude Code
 
@@ -13,7 +13,7 @@ Install the plugin once to get both the MCP server and the skill:
 /plugin install letsrunit@letsrunit
 ```
 
-On the next conversation, Claude has the full step library, the locator syntax, and knows how to handle failures on its own.
+On the next conversation, Claude can use `letsrunit` for live browser work and `letsrunit-writer` for test authoring.
 
 ## Cursor
 
@@ -90,4 +90,3 @@ When a scenario passes:
 
 Only keep scenarios that cover flows that could plausibly break from an unrelated change. Skip trivial or redundant ones.
 ```
-
