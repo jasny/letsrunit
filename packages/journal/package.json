@@ -1,6 +1,6 @@
 {
   "name": "@letsrunit/journal",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "Logging and journaling system for letsrunit",
   "keywords": [
     "testing",

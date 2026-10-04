@@ -1,3 +1,10 @@
+# [0.26.0](https://github.com/letsrunit-hq/letsrunit/compare/v0.25.0...v0.26.0) (2026-10-04)
+
+
+### Features
+
+* install Letsrunit writer skill ([9471292](https://github.com/letsrunit-hq/letsrunit/commit/947129230223510b2a05bf2a9f41962ac57ad026))
+
 # [0.25.0](https://github.com/letsrunit-hq/letsrunit/compare/v0.24.2...v0.25.0) (2026-07-02)
 
 
