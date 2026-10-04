@@ -24,6 +24,9 @@ afterEach(() => {
 function mockSkillDownload(): void {
   const rootUrl = 'https://api.github.com/repos/letsrunit-hq/agents/contents/skills/letsrunit';
   const docsUrl = 'https://api.github.com/repos/letsrunit-hq/agents/contents/skills/letsrunit/docs';
+  const writerUrl = 'https://api.github.com/repos/letsrunit-hq/agents/contents/skills/letsrunit-writer';
+  const writerReferencesUrl =
+    'https://api.github.com/repos/letsrunit-hq/agents/contents/skills/letsrunit-writer/references';
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: string | URL | Request) => {
@@ -55,6 +58,36 @@ function mockSkillDownload(): void {
           ]),
         );
       }
+      if (url === writerUrl) {
+        return new Response(
+          JSON.stringify([
+            {
+              type: 'file',
+              path: 'skills/letsrunit-writer/SKILL.md',
+              download_url:
+                'https://raw.githubusercontent.com/letsrunit-hq/agents/main/skills/letsrunit-writer/SKILL.md',
+            },
+            {
+              type: 'dir',
+              path: 'skills/letsrunit-writer/references',
+            },
+          ]),
+        );
+      }
+      if (url === writerReferencesUrl) {
+        return new Response(
+          JSON.stringify([
+            {
+              type: 'file',
+              path: 'skills/letsrunit-writer/references/custom-steps.md',
+              download_url:
+                'https://raw.githubusercontent.com/letsrunit-hq/agents/main/skills/letsrunit-writer/references/custom-steps.md',
+            },
+          ]),
+        );
+      }
+      if (url.endsWith('/letsrunit-writer/references/custom-steps.md')) return new Response('writer reference');
+      if (url.endsWith('/letsrunit-writer/SKILL.md')) return new Response('writer skill');
       if (url.endsWith('/SKILL.md')) return new Response('real skill');
       if (url.endsWith('/workflow.md')) return new Response('real workflow');
       return new Response('not found', { status: 404 });
@@ -106,7 +139,7 @@ describe('setupAgents behavior', () => {
     mkdirSync(join(cwd, 'agent', 'skills', 'letsrunit'), { recursive: true });
     writeFileSync(join(cwd, 'agent', 'skills', 'letsrunit', 'SKILL.md'), 'demo', 'utf-8');
 
-    await setupAgents({ cwd, isInteractive: false }, { agents: [] });
+    await setupAgents({ cwd }, { agents: [] });
 
     expect(() => readFileSync(join(cwd, '.mcp.json'), 'utf-8')).toThrow();
   });
@@ -115,7 +148,7 @@ describe('setupAgents behavior', () => {
     const cwd = makeDir();
     mockSkillDownload();
 
-    await setupAgents({ cwd, isInteractive: false }, { agents: ['cursor', 'codex'] });
+    await setupAgents({ cwd }, { agents: ['cursor', 'codex'] });
 
     const configPath = join(cwd, '.cursor', 'mcp.json');
     const config = JSON.parse(readFileSync(configPath, 'utf-8')) as {
@@ -126,6 +159,10 @@ describe('setupAgents behavior', () => {
 
     const skillPath = join(cwd, '.agents', 'skills', 'letsrunit', 'SKILL.md');
     expect(readFileSync(skillPath, 'utf-8')).toBe('real skill');
+    expect(readFileSync(join(cwd, '.agents', 'skills', 'letsrunit-writer', 'SKILL.md'), 'utf-8')).toBe('writer skill');
+    expect(
+      readFileSync(join(cwd, '.agents', 'skills', 'letsrunit-writer', 'references', 'custom-steps.md'), 'utf-8'),
+    ).toBe('writer reference');
     expect(readFileSync(join(cwd, '.agents', 'skills', 'letsrunit', 'docs', 'workflow.md'), 'utf-8')).toBe(
       'real workflow',
     );
@@ -142,6 +179,10 @@ describe('setupAgents behavior', () => {
 
     expect(await ensureSkillDirectory(cwd)).toBe('installed');
     expect(readFileSync(join(cwd, '.agents', 'skills', 'letsrunit', 'SKILL.md'), 'utf-8')).toBe('real skill');
+    expect(readFileSync(join(cwd, '.agents', 'skills', 'letsrunit-writer', 'SKILL.md'), 'utf-8')).toBe('writer skill');
+    expect(
+      readFileSync(join(cwd, '.agents', 'skills', 'letsrunit-writer', 'references', 'custom-steps.md'), 'utf-8'),
+    ).toBe('writer reference');
     expect(readFileSync(join(cwd, '.agents', 'skills', 'letsrunit', 'docs', 'workflow.md'), 'utf-8')).toBe(
       'real workflow',
     );

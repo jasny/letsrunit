@@ -8,10 +8,10 @@ Letsrunit ships with built-in steps from `@letsrunit/cucumber`, but you can add 
 
 ## Using custom steps
 
-Create a file such as `features/support/custom-steps.js`. Cucumber loads files in `features/support/**/*.js` automatically, so you do not need to register the file anywhere.
+Create a file such as `features/support/custom-steps.js`. Check that your `cucumber.js` support glob includes it. Register custom definitions before importing `@letsrunit/cucumber` in `features/support/world.js` so Cucumber includes them as well as live Letsrunit sessions.
 
 ```js
-import { Then, When } from '@letsrunit/cucumber';
+import { Then, When } from '@letsrunit/bdd';
 
 When('I open the profile menu', async function () {
   await this.page.getByRole('button', { name: 'Profile' }).click();
@@ -23,6 +23,15 @@ Then('I should see the signed-in email {string}', async function (email) {
 ```
 
 `this.page` is the Playwright page provided by Letsrunit's world setup.
+
+Import the custom module before `@letsrunit/cucumber` in `features/support/world.js`:
+
+```js
+import './custom-steps.js';
+import '@letsrunit/cucumber';
+```
+
+The live MCP runtime loads the custom file through the Cucumber support glob. After editing it, call `letsrunit_reload` in project runtime mode and start a new session before listing or running steps.
 
 Use the step in your feature:
 
