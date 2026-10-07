@@ -3118,7 +3118,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cucumber/messages@npm:>=31.0.0 <32, @cucumber/messages@npm:^31.0.0, @cucumber/messages@npm:^31.2.0":
+"@cucumber/messages@npm:>=31.0.0 <32":
   version: 31.2.0
   resolution: "@cucumber/messages@npm:31.2.0"
   dependencies:
@@ -3135,6 +3135,13 @@ __metadata:
     class-transformer: "npm:0.5.1"
     reflect-metadata: "npm:0.2.2"
   checksum: 10c0/4d1b126aa814b1b31baa59235aa560b826ad914b8c775a5d6da4ef7e64ed3a87e24d5992e33fffc6e3f55ccd142fca79e88d11a25b36e4467a8154792e4967d1
+  languageName: node
+  linkType: hard
+
+"@cucumber/messages@npm:^34.2.1":
+  version: 34.2.1
+  resolution: "@cucumber/messages@npm:34.2.1"
+  checksum: 10c0/0e81ed0b6aa33f4a814deb87c02ab7eb03ef6fcb9443802cd43b945b7d27fa132d08257789f52f7d454d7a53fe8df4aff17ea3e4787767891c87ad81e676966d
   languageName: node
   linkType: hard
 
@@ -5556,7 +5563,7 @@ __metadata:
   resolution: "@letsrunit/cucumber@workspace:packages/cucumber"
   dependencies:
     "@cucumber/cucumber": "npm:^12.7.0"
-    "@cucumber/messages": "npm:^31.0.0"
+    "@cucumber/messages": "npm:^34.2.1"
     "@letsrunit/bdd": "workspace:*"
     "@letsrunit/gherkin": "workspace:*"
     "@letsrunit/playwright": "workspace:*"
@@ -5594,7 +5601,7 @@ __metadata:
   dependencies:
     "@cucumber/cucumber-expressions": "npm:^18.1.0"
     "@cucumber/gherkin": "npm:^37.0.1"
-    "@cucumber/messages": "npm:^31.2.0"
+    "@cucumber/messages": "npm:^34.2.1"
     "@letsrunit/gherkin": "workspace:*"
     "@types/node": "npm:^25.9.3"
   languageName: unknown
@@ -5606,7 +5613,7 @@ __metadata:
   dependencies:
     "@cucumber/cucumber-expressions": "npm:^18.1.0"
     "@cucumber/gherkin": "npm:^37.0.1"
-    "@cucumber/messages": "npm:^31.2.0"
+    "@cucumber/messages": "npm:^34.2.1"
     "@letsrunit/utils": "workspace:*"
     peggy: "npm:^5.0.6"
   languageName: unknown
