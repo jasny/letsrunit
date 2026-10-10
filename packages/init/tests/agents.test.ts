@@ -22,11 +22,11 @@ afterEach(() => {
 });
 
 function mockSkillDownload(): void {
-  const rootUrl = 'https://api.github.com/repos/letsrunit-hq/agents/contents/skills/letsrunit';
-  const docsUrl = 'https://api.github.com/repos/letsrunit-hq/agents/contents/skills/letsrunit/docs';
-  const writerUrl = 'https://api.github.com/repos/letsrunit-hq/agents/contents/skills/letsrunit-writer';
+  const rootUrl = 'https://api.github.com/repos/jasny/letsrunit/contents/skills/letsrunit';
+  const docsUrl = 'https://api.github.com/repos/jasny/letsrunit/contents/skills/letsrunit/docs';
+  const writerUrl = 'https://api.github.com/repos/jasny/letsrunit/contents/skills/letsrunit-writer';
   const writerReferencesUrl =
-    'https://api.github.com/repos/letsrunit-hq/agents/contents/skills/letsrunit-writer/references';
+    'https://api.github.com/repos/jasny/letsrunit/contents/skills/letsrunit-writer/references';
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: string | URL | Request) => {
@@ -37,7 +37,7 @@ function mockSkillDownload(): void {
             {
               type: 'file',
               path: 'skills/letsrunit/SKILL.md',
-              download_url: 'https://raw.githubusercontent.com/letsrunit-hq/agents/main/skills/letsrunit/SKILL.md',
+              download_url: 'https://raw.githubusercontent.com/jasny/letsrunit/main/skills/letsrunit/SKILL.md',
             },
             {
               type: 'dir',
@@ -52,8 +52,7 @@ function mockSkillDownload(): void {
             {
               type: 'file',
               path: 'skills/letsrunit/docs/workflow.md',
-              download_url:
-                'https://raw.githubusercontent.com/letsrunit-hq/agents/main/skills/letsrunit/docs/workflow.md',
+              download_url: 'https://raw.githubusercontent.com/jasny/letsrunit/main/skills/letsrunit/docs/workflow.md',
             },
           ]),
         );
@@ -64,8 +63,7 @@ function mockSkillDownload(): void {
             {
               type: 'file',
               path: 'skills/letsrunit-writer/SKILL.md',
-              download_url:
-                'https://raw.githubusercontent.com/letsrunit-hq/agents/main/skills/letsrunit-writer/SKILL.md',
+              download_url: 'https://raw.githubusercontent.com/jasny/letsrunit/main/skills/letsrunit-writer/SKILL.md',
             },
             {
               type: 'dir',
@@ -81,7 +79,7 @@ function mockSkillDownload(): void {
               type: 'file',
               path: 'skills/letsrunit-writer/references/custom-steps.md',
               download_url:
-                'https://raw.githubusercontent.com/letsrunit-hq/agents/main/skills/letsrunit-writer/references/custom-steps.md',
+                'https://raw.githubusercontent.com/jasny/letsrunit/main/skills/letsrunit-writer/references/custom-steps.md',
             },
           ]),
         );
@@ -173,7 +171,7 @@ describe('setupAgents behavior', () => {
     expect(codexConfig).toContain('LETSRUNIT_MCP_RUNTIME_MODE = "project"');
   });
 
-  it('installs the full letsrunit skill directory from the agent repository', async () => {
+  it('installs the full letsrunit skill directory from the letsrunit repository', async () => {
     const cwd = makeDir();
     mockSkillDownload();
 

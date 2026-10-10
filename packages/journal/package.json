@@ -11,11 +11,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/letsrunit-hq/letsrunit.git",
+    "url": "https://github.com/jasny/letsrunit.git",
     "directory": "packages/journal"
   },
-  "bugs": "https://github.com/letsrunit-hq/letsrunit/issues",
-  "homepage": "https://github.com/letsrunit-hq/letsrunit#readme",
+  "bugs": "https://github.com/jasny/letsrunit/issues",
+  "homepage": "https://github.com/jasny/letsrunit#readme",
   "type": "module",
   "main": "./src/index.ts",
   "module": "./src/index.ts",
