@@ -27,11 +27,11 @@ You can install the Letsrunit MCP server and skill globally for all your project
 
 {% tabs %}
 {% tab title="Claude Code" %}
-The Letsrunit plugin installs the MCP server and both skills automatically. Run inside Claude Code:
+Add the MCP server and install both skills:
 
-```
-/plugin marketplace add letsrunit-hq/agents
-/plugin install letsrunit@letsrunit
+```bash
+claude mcp add letsrunit -- npx -y @letsrunit/mcp-server@latest
+npx skills add jasny/letsrunit -g -a claude-code
 ```
 
 {% endtab %}
@@ -46,7 +46,7 @@ codex mcp add letsrunit -- npx -y @letsrunit/mcp-server@latest
 Install the skills into your repo.
 
 ```bash
-npx skills add letsrunit-hq/agents
+npx skills add jasny/letsrunit
 ```
 
 Codex uses `letsrunit` for live browser work and `letsrunit-writer` for test authoring.
@@ -66,10 +66,10 @@ Add `.cursor/mcp.json` to your project root:
 }
 ```
 
-Install the skill via the Cursor UI: open **Settings → Rules**, click **Add Rule**, select **Remote Rule (GitHub)**, and enter:
+Install both skills:
 
-```
-https://github.com/letsrunit-hq/agents
+```bash
+npx skills add jasny/letsrunit -a cursor
 ```
 
 Cursor loads it automatically when you ask it to write or run browser tests.
@@ -92,7 +92,7 @@ Add the MCP server in your agent's config format. The standard JSON:
 Then load the skills into your agent's system context:
 
 ```
-npx skills add letsrunit-hq/agents
+npx skills add jasny/letsrunit
 ```
 
 {% endtab %}

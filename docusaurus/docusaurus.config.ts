@@ -51,9 +51,7 @@ const config: Config = {
   },
 
   // Font Awesome for GitBook icon blocks
-  stylesheets: [
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-  ],
+  stylesheets: ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'],
 
   // Registers GitBook theme components and CSS
   plugins: [
@@ -124,7 +122,7 @@ const config: Config = {
       },
       items: [
         {
-          href: 'https://github.com/letsrunit-hq/letsrunit',
+          href: 'https://github.com/jasny/letsrunit',
           label: 'GitHub',
           position: 'right',
         },

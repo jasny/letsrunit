@@ -1,4 +1,4 @@
-![letsrunit](https://cdn.jsdelivr.net/gh/letsrunit-hq/letsrunit@main/docs/.gitbook/assets/logo-light.svg)
+![letsrunit](https://cdn.jsdelivr.net/gh/jasny/letsrunit@main/docs/.gitbook/assets/logo-light.svg)
 
 # MCP Server
 
@@ -8,11 +8,11 @@ When a scenario passes, it produces a `.feature` file that gets committed and ru
 
 ## Setup
 
-**Claude Code** — install the plugin to get both the MCP server and the skill:
+**Claude Code** — add the MCP server and install both skills:
 
-```
-/plugin marketplace add letsrunit-hq/agents
-/plugin install letsrunit@letsrunit
+```bash
+claude mcp add letsrunit -- npx -y @letsrunit/mcp-server@latest
+npx skills add jasny/letsrunit -g -a claude-code
 ```
 
 **Cursor** — add `.cursor/mcp.json` to your project root:
@@ -79,8 +79,8 @@ When you edit existing support files during a long-running agent session, call `
 
 The MCP server exposes the tools, but the skill teaches the agent how to use them well — the full step library, the locator language, and how to handle failures. Without it the agent can call the tools; with it, it writes correct Gherkin from the start.
 
-The skill is included automatically in the Claude Code plugin above. For other agents, load it from:
+Install both skills with `npx skills add jasny/letsrunit`. The runtime skill is available at:
 
 ```
-https://github.com/letsrunit-hq/agents/blob/main/skills/letsrunit/SKILL.md
+https://github.com/jasny/letsrunit/blob/main/skills/letsrunit/SKILL.md
 ```

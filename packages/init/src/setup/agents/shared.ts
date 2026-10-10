@@ -9,7 +9,7 @@ const MCP_JSON_ENTRY = {
   },
 };
 
-const AGENT_REPOSITORY = 'letsrunit-hq/agents';
+const AGENT_REPOSITORY = 'jasny/letsrunit';
 const SKILL_NAMES = ['letsrunit', 'letsrunit-writer'] as const;
 
 interface GithubContentItem {

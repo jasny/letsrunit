@@ -1,4 +1,4 @@
-![letsrunit](https://cdn.jsdelivr.net/gh/letsrunit-hq/letsrunit@main/docs/.gitbook/assets/logo-light.svg)
+![letsrunit](https://cdn.jsdelivr.net/gh/jasny/letsrunit@main/docs/.gitbook/assets/logo-light.svg)
 
 letsrunit helps developers and AI coding agents verify web apps in a real browser using plain-language Gherkin tests. Tests are regular `.feature` files, run with Cucumber, and can keep running in CI after the agent session ends.
 
